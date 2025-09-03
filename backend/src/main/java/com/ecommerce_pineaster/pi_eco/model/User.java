@@ -40,7 +40,7 @@ public class User {
     private String email;
 
     @NotBlank
-    @Size(max=40)
+    @Size(max=120)
     @Column(name = "password")
     private String password;
 
