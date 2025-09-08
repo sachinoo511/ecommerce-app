@@ -13,4 +13,7 @@ public interface CartRepository extends CrudRepository<Cart, Long> {
 
     @Query("select c from Cart c where  c.user.email = ?1 and c.cartId = ?2")
     Cart findCartByEmailAndCartId(String emailId, Long cartId);
+
+    @Query("select  c from Cart c Join fetch c.cartItems ci  join  fetch  ci.product p where  p.productId = ?1")
+    List<Cart> findCartsByProductId(Long productId);
 }
