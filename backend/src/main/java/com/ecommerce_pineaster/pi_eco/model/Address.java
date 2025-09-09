@@ -22,11 +22,11 @@ public class Address {
     private Long addressId;
 
     @NotBlank
-    @Size(min = 10, message = "At least 5 characters required")
+    @Size(min = 1, message = "At least 5 characters required")
     private String street;
 
     @NotBlank
-    @Size(min = 5, message = "At least 5 characters required")
+    @Size(min = 2, message = "At least 5 characters required")
     private String buildingName;
 
     @NotBlank
@@ -46,18 +46,10 @@ public class Address {
 
 
     @ToString.Exclude
-    @ManyToMany(mappedBy = "addresses")
-    private List<User> users  = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
 
 
-    public Address(String street, String buildingName, String city, String state, String country, String pincode, List<User> users) {
-        this.street = street;
-        this.buildingName = buildingName;
-        this.city = city;
-        this.state = state;
-        this.country = country;
-        this.pincode = pincode;
-        this.users = users;
-    }
 }
