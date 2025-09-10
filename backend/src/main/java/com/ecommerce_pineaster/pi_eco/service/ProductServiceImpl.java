@@ -236,15 +236,10 @@ public class ProductServiceImpl  implements ProductService  {
         List<Cart>  carts =  cartRepository.findCartsByProductId(productId);
         carts.forEach(cart ->cartService.deleteProductFromCart(cart.getCartId(),productId));
 
-         if(findProduct !=null){
-
              productRepository.delete(findProduct);
 
-
              return modelMapper.map(findProduct,ProductDTO.class);
-         }else {
-             throw new ApiException("No product exist");
-         }
+
     }
 
     @Override

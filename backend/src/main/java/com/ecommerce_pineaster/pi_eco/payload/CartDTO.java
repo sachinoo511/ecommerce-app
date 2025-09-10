@@ -16,8 +16,4 @@ public class CartDTO {
     private Double totalprice = 0.0;
     private List<ProductDTO> products = new ArrayList<>();
 
-    public static class AddressDTO {
-        private String address;
-
-    }
 }

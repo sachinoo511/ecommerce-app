@@ -4,7 +4,10 @@ import com.ecommerce_pineaster.pi_eco.exception.ApiException;
 import com.ecommerce_pineaster.pi_eco.exception.ResourceNotFoundException;
 import com.ecommerce_pineaster.pi_eco.model.*;
 import com.ecommerce_pineaster.pi_eco.payload.OrderDTO;
+import com.ecommerce_pineaster.pi_eco.payload.OrderItemDTO;
 import com.ecommerce_pineaster.pi_eco.repository.*;
+import jakarta.transaction.Transactional;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +18,8 @@ import java.util.List;
 @Service
 public class OrderServiceImpl implements OrderService {
 
+    @Autowired
+    ModelMapper modelMapper;
     @Autowired
     private OrderRepository orderRepository;
     @Autowired
@@ -32,6 +37,7 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
+    @Transactional
     public OrderDTO placeOrder(String email, Long addressId,  String paymentMethod, String pgName,
                                String pgPaymentId, String pgStatus,
                                String pgResponseMessage) {
@@ -83,11 +89,27 @@ public class OrderServiceImpl implements OrderService {
         //Update Product Stock
         cart.getCartItems().forEach(item->{
             int quantity = item.getQuantity();
-            item.setQuantity(item.getProduct().getQuantity()-quantity);
+            Product product = item.getProduct();
+            item.setQuantity(product.getQuantity()-quantity);
             productRepository.save(item.getProduct());
+
+            // Clear Cart
+
+            cartService.deleteProductFromCart(cart.getCartId(),item.getProduct().getProductId());
+
         });
 
+        // Send Back
+        OrderDTO orderDTO =  modelMapper.map(savedOrder,OrderDTO.class);
 
-        return null;
+//        orderItemList.forEach(item->orderDTO.getOrderItemDTOList()
+//                .add(modelMapper.map(item, OrderItemDTO.class)));
+
+        orderDTO.setOrderItemDTOList(orderItemList.stream()
+                .map(orderItem -> modelMapper.map(orderItem,OrderItemDTO.class)).toList());
+        orderDTO.setAddressId(addressId);
+
+
+        return orderDTO;
     }
 }

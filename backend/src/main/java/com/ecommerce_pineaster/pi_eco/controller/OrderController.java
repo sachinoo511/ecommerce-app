@@ -18,12 +18,13 @@ public class OrderController {
 
     @Autowired
     private AuthUtil authUtil;
+
     @PostMapping("/order/users/payment/{paymentMethod}")
     public ResponseEntity<OrderDTO> orderProduct(@RequestBody OrderRequestDTO orderRequestDTO,
                                                 @PathVariable String paymentMethod){
-
+        String email = authUtil.loggedInUserEmail();
         OrderDTO orderDTO = orderService.placeOrder(
-                                                authUtil.loggedInUserEmail(),
+                                                email,
                                                 orderRequestDTO.getAddressId(),
                                                 paymentMethod,
                                                 orderRequestDTO.getPgName(),
